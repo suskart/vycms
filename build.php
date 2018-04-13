@@ -6,7 +6,7 @@ return [
     // 后台模块
     'admin'     => [
         '__file__'   => ['common.php', 'config.php', 'database.php'],
-        '__dir__'    => ['behavior', 'controller', 'model', 'view'],
+        '__dir__'    => [ 'controller', 'model', 'view'],
         'controller' => ['Index'],
         'model'      => [],
         'view'       => ['index/index'],
@@ -15,7 +15,7 @@ return [
 	// 前台模块
 	'index'     => [
         '__file__'   => ['common.php', 'config.php', 'database.php'],
-        '__dir__'    => ['behavior', 'controller', 'model', 'view'],
+        '__dir__'    => ['controller', 'model', 'view'],
         'controller' => ['Index'],
         'model'      => [],
         'view'       => ['index/index'],
