@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:51:"D:\wwwroot\vycms/app/admin\view\auth\rule_edit.html";i:1523669018;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:44:"D:\wwwroot\vycms/app/admin\view\ad\form.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -90,58 +90,67 @@
     <!-- 内容主体区域 -->
     <div style="padding: 15px;">
     	
-<div class="admin-main">
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>编辑菜单</legend>
+        <legend><?php echo $title; ?></legend>
     </fieldset>
-    <blockquote class="layui-elem-quote">
-        1、《控制器/方法》： 例如 System/list<br/>
-        2、图标名称为左侧导航栏目的图标样式，菜单小图标采用的是<a href="https://icomoon.io/#premium" target="_blank">premium图标</a>
-    </blockquote>
     <form class="layui-form layui-form-pane">
-        <input type="hidden" name="id" value="<?php echo $rule['id']; ?>">
         <div class="layui-form-item">
-            <label class="layui-form-label">菜单名称</label>
+            <label class="layui-form-label">所属位置</label>
             <div class="layui-input-4">
-                <input type="text" name="title" value="<?php echo $rule['title']; ?>" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?>菜单名称" class="layui-input">
+                <select name="type_id" lay-verify="required" ng-model="field.type_id" ng-options="v.type_id as v.name for v in group" ng-selected="v.type_id==field.type_id">
+                    <option value="">请选择所属广告位</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">控制器/方法</label>
+            <label class="layui-form-label">广告名称</label>
             <div class="layui-input-4">
-                <input type="text" name="href" value="<?php echo $rule['href']; ?>" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?>控制器/方法" class="layui-input">
+                <input type="text" name="name" ng-model="field.name" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?>广告名称" class="layui-input">
             </div>
         </div>
-        
-        
- 
-        
-        
         <div class="layui-form-item">
-            <label class="layui-form-label">图标名称</label>
-            <div class="layui-input-4">
-                <input type="text" name="icon" value="<?php echo $rule['icon']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?>图标名称" class="layui-input">
-    
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">菜单状态</label>
+            <label class="layui-form-label">广告图片</label>
+            <input type="hidden" name="pic" id="pic" value="{{field.pic}}">
             <div class="layui-input-block">
-                <input type="radio" name="menustatus" <?php if($rule['menustatus'] == 1): ?>checked<?php endif; ?> value="1" title="开启">
-                <input type="radio" name="menustatus" <?php if($rule['menustatus'] == 0): ?>checked<?php endif; ?> value="0" title="关闭">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-primary" id="adBtn"><i class="icon icon-upload3"></i>点击上传</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" id="adPic">
+                        <p id="demoText"></p>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">排序</label>
-            <div class="layui-input-2">
-                <input type="text" name="sort" value="<?php echo $rule['sort']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?>排序编号" class="layui-input">
+            <label class="layui-form-label"><?php echo lang('ad'); ?>URL</label>
+            <div class="layui-input-4">
+                <input type="text" name="url" ng-model="field.url" lay-verify="url" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('ad'); ?>URL" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否审核</label>
+            <div class="layui-input-block">
+                <input type="radio" name="open" ng-model="field.open" ng-checked="field.open==1" ng-value="1" title="<?php echo lang('open'); ?>">
+                <input type="radio" name="open" ng-model="field.open" ng-checked="field.open==0" ng-value="0" title="<?php echo lang('close'); ?>">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><?php echo lang('order'); ?></label>
+            <div class="layui-input-4">
+                <input type="text" name="sort" ng-model="field.sort" value="" placeholder="从小到大排序" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block">
+                <textarea ng-model="field.content" placeholder="请输广告内容" name="content" class="layui-textarea"></textarea>
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button type="button" class="layui-btn" lay-submit="" lay-filter="auth">立即提交</button>
-                <a href="<?php echo url('adminRule'); ?>" class="layui-btn layui-btn-primary">返回</a>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit"><?php echo lang('submit'); ?></button>
+                <a href="<?php echo url('index'); ?>" class="layui-btn layui-btn-primary"><?php echo lang('back'); ?></a>
             </div>
         </div>
     </form>
@@ -192,22 +201,59 @@
     </script>
 </body>
 </html>
+<script src="/public/static/common/js/angular.min.js"></script>
 <script>
-    layui.use(['form', 'layer'], function () {
-        var form = layui.form,layer = layui.layer,$ = layui.jquery;
-        form.on('submit(auth)', function (data) {
-            // 提交到方法 默认为本身
-            $.post("<?php echo url('ruleEdit'); ?>",data.field,function(res){
-                if(res.code > 0){
-                    layer.msg(res.msg,{time:1800,icon:1},function(){
-                        location.href = res.url;
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',['$scope',function($scope) {
+        $scope.field = '<?php echo $info; ?>'!='null'?<?php echo $info; ?>:{type_id:'',ad_id:'',name:'',url:'',open:1,sort:50,pic:'',content:''};
+        $scope.group = <?php echo $adtypeList; ?>;
+        layui.use(['form', 'layer','upload'], function () {
+            var form = layui.form, $ = layui.jquery, upload = layui.upload;
+            if($scope.field.pic){
+                adPic.src = "/public"+ $scope.field.pic;
+            }
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                data.field.ad_id = $scope.field.ad_id;
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            });
+            //普通图片上传
+            var uploadInst = upload.render({
+                elem: '#adBtn'
+                ,url: '<?php echo url("UpFiles/upload"); ?>'
+                ,before: function(obj){
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function(index, file, result){
+                        $('#adPic').attr('src', result); //图片链接（base64）
                     });
-                }else{
-                    layer.msg(res.msg,{time:1800,icon:2});
+                },
+                done: function(res){
+                    if(res.code>0){
+                        $('#pic').val(res.url);
+                    }else{
+                        //如果上传失败
+                        return layer.msg('上传失败');
+                    }
+                }
+                ,error: function(){
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
                 }
             });
-        })
-    })
+        });
+    }]);
 </script>
-</body>
-</html>

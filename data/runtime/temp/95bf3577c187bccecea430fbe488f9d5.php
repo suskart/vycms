@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:51:"D:\wwwroot\vycms/app/admin\view\auth\rule_edit.html";i:1523669018;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:52:"D:\wwwroot\vycms/app/admin\view\auth\admin_form.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -90,58 +90,70 @@
     <!-- 内容主体区域 -->
     <div style="padding: 15px;">
     	
-<div class="admin-main">
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>编辑菜单</legend>
+        <legend><?php echo $title; ?></legend>
     </fieldset>
-    <blockquote class="layui-elem-quote">
-        1、《控制器/方法》： 例如 System/list<br/>
-        2、图标名称为左侧导航栏目的图标样式，菜单小图标采用的是<a href="https://icomoon.io/#premium" target="_blank">premium图标</a>
-    </blockquote>
     <form class="layui-form layui-form-pane">
-        <input type="hidden" name="id" value="<?php echo $rule['id']; ?>">
         <div class="layui-form-item">
-            <label class="layui-form-label">菜单名称</label>
+            <label class="layui-form-label">所属用户组</label>
             <div class="layui-input-4">
-                <input type="text" name="title" value="<?php echo $rule['title']; ?>" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?>菜单名称" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">控制器/方法</label>
-            <div class="layui-input-4">
-                <input type="text" name="href" value="<?php echo $rule['href']; ?>" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?>控制器/方法" class="layui-input">
-            </div>
-        </div>
-        
-        
- 
-        
-        
-        <div class="layui-form-item">
-            <label class="layui-form-label">图标名称</label>
-            <div class="layui-input-4">
-                <input type="text" name="icon" value="<?php echo $rule['icon']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?>图标名称" class="layui-input">
-    
+                <select name="group_id" lay-verify="required" ng-model="selected" ng-options="v.group_id as v.title for v in group track by v.group_id">
+                    <option value="">请选择用户组</option>
+                </select>
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">菜单状态</label>
-            <div class="layui-input-block">
-                <input type="radio" name="menustatus" <?php if($rule['menustatus'] == 1): ?>checked<?php endif; ?> value="1" title="开启">
-                <input type="radio" name="menustatus" <?php if($rule['menustatus'] == 0): ?>checked<?php endif; ?> value="0" title="关闭">
+            <label class="layui-form-label"><?php echo lang('username'); ?></label>
+            <div class="layui-input-4">
+                <input type="text" name="username" ng-model="field.username" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?>登录用户名" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                用户名必须是以字母开头，数字、符号组合。
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">排序</label>
-            <div class="layui-input-2">
-                <input type="text" name="sort" value="<?php echo $rule['sort']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?>排序编号" class="layui-input">
+            <label class="layui-form-label"><?php echo lang('pwd'); ?></label>
+            <div class="layui-input-4">
+                <input type="password" name="pwd" placeholder="<?php echo lang('pleaseEnter'); ?>登录密码" <?php if(ACTION_NAME == 'adminadd'): ?>lay-verify="required"<?php endif; ?> class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                密码必须大于6位，小于15位.
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">头像</label>
+            <input type="hidden" name="avatar" id="avatar" value="{{field.avatar}}">
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-primary" id="adBtn"><i class="icon icon-upload3"></i>点击上传</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" id="adPic">
+                        <p id="demoText"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><?php echo lang('email'); ?></label>
+            <div class="layui-input-4">
+                <input type="text" name="email" ng-model="field.email" lay-verify="email" placeholder="<?php echo lang('pleaseEnter'); ?>用户邮箱" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                用于密码找回，请认真填写.
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><?php echo lang('tel'); ?></label>
+            <div class="layui-input-4">
+                <input type="text" name="tel" ng-model="field.tel" lay-verify="phone" value="" placeholder="<?php echo lang('pleaseEnter'); ?>手机号" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button type="button" class="layui-btn" lay-submit="" lay-filter="auth">立即提交</button>
-                <a href="<?php echo url('adminRule'); ?>" class="layui-btn layui-btn-primary">返回</a>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit"><?php echo lang('submit'); ?></button>
+                <a href="<?php echo url('adminList'); ?>" class="layui-btn layui-btn-primary"><?php echo lang('back'); ?></a>
             </div>
         </div>
     </form>
@@ -192,22 +204,60 @@
     </script>
 </body>
 </html>
+<script src="/public/static/common/js/angular.min.js"></script>
 <script>
-    layui.use(['form', 'layer'], function () {
-        var form = layui.form,layer = layui.layer,$ = layui.jquery;
-        form.on('submit(auth)', function (data) {
-            // 提交到方法 默认为本身
-            $.post("<?php echo url('ruleEdit'); ?>",data.field,function(res){
-                if(res.code > 0){
-                    layer.msg(res.msg,{time:1800,icon:1},function(){
-                        location.href = res.url;
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',['$scope',function($scope) {
+        $scope.field = '<?php echo $info; ?>'!='null'?<?php echo $info; ?>:{group_id:'',username:'',email:'',tel:'',avatar:''};
+        $scope.group = <?php echo $authGroup; ?>;
+        $scope.selected = <?php echo $selected; ?>;
+        layui.use(['form', 'layer','upload'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery,upload = layui.upload;
+            if($scope.field.avatar){
+                adPic.src = "/public"+ $scope.field.avatar;
+            }
+			form.render();
+            form.on('submit(submit)', function (data) {
+                loading =layer.load(1, {shade: [0.1,'#fff']});
+                data.field.admin_id = $scope.field.admin_id;
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            });
+            //普通图片上传
+            var uploadInst = upload.render({
+                elem: '#adBtn'
+                ,url: '<?php echo url("UpFiles/upload"); ?>'
+                ,before: function(obj){
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function(index, file, result){
+                        $('#adPic').attr('src', result); //图片链接（base64）
                     });
-                }else{
-                    layer.msg(res.msg,{time:1800,icon:2});
+                },
+                done: function(res){
+                    if(res.code>0){
+                        $('#avatar').val(res.url);
+                    }else{
+                        //如果上传失败
+                        return layer.msg('上传失败');
+                    }
+                }
+                ,error: function(){
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
                 }
             });
-        })
-    })
+        });
+    }]);
 </script>
-</body>
-</html>

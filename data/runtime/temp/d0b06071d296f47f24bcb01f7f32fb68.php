@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:51:"D:\wwwroot\vycms/app/admin\view\auth\rule_edit.html";i:1523669018;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:50:"D:\wwwroot\vycms/app/admin\view\system\system.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -90,58 +90,91 @@
     <!-- 内容主体区域 -->
     <div style="padding: 15px;">
     	
-<div class="admin-main">
+<div class="admin-main layui-anim layui-anim-upbit">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>编辑菜单</legend>
+        <legend><?php echo lang('systemSet'); ?></legend>
     </fieldset>
-    <blockquote class="layui-elem-quote">
-        1、《控制器/方法》： 例如 System/list<br/>
-        2、图标名称为左侧导航栏目的图标样式，菜单小图标采用的是<a href="https://icomoon.io/#premium" target="_blank">premium图标</a>
-    </blockquote>
     <form class="layui-form layui-form-pane">
-        <input type="hidden" name="id" value="<?php echo $rule['id']; ?>">
         <div class="layui-form-item">
-            <label class="layui-form-label">菜单名称</label>
+            <label class="layui-form-label"><?php echo lang('websiteName'); ?></label>
             <div class="layui-input-4">
-                <input type="text" name="title" value="<?php echo $rule['title']; ?>" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?>菜单名称" class="layui-input">
+                <input type="text"name="name" value="<?php echo $system['name']; ?>" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('websiteName'); ?>" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">控制器/方法</label>
+            <label class="layui-form-label"><?php echo lang('WebsiteUrl'); ?></label>
             <div class="layui-input-4">
-                <input type="text" name="href" value="<?php echo $rule['href']; ?>" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?>控制器/方法" class="layui-input">
+                <input type="text" name="url" value="<?php echo $system['url']; ?>" lay-verify="url" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('WebsiteUrl'); ?>" class="layui-input">
             </div>
         </div>
-        
-        
- 
-        
-        
         <div class="layui-form-item">
-            <label class="layui-form-label">图标名称</label>
+            <label class="layui-form-label"><?php echo lang('seoTitle'); ?></label>
             <div class="layui-input-4">
-                <input type="text" name="icon" value="<?php echo $rule['icon']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?>图标名称" class="layui-input">
-    
+                <input type="text"name="title" value="<?php echo $system['title']; ?>"lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('WebsiteUrl'); ?>" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label"><?php echo lang('seoKeyword'); ?></label>
+            <div class="layui-input-block">
+                <textarea name="key" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('seoKeyword'); ?>" class="layui-textarea"><?php echo $system['key']; ?></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label"><?php echo lang('description'); ?></label>
+            <div class="layui-input-block">
+                <textarea name="des" lay-verify="required" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('description'); ?>" class="layui-textarea"><?php echo $system['des']; ?></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">网站LOGO</label>
+            <input type="hidden" name="logo" id="logo" value="<?php echo $system['logo']; ?>">
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-primary" id="logoBtn"><i class="icon icon-upload3"></i>点击上传</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" id="cltLogo">
+                        <p id="demoText"></p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">菜单状态</label>
-            <div class="layui-input-block">
-                <input type="radio" name="menustatus" <?php if($rule['menustatus'] == 1): ?>checked<?php endif; ?> value="1" title="开启">
-                <input type="radio" name="menustatus" <?php if($rule['menustatus'] == 0): ?>checked<?php endif; ?> value="0" title="关闭">
+            <label class="layui-form-label"><?php echo lang('recordNum'); ?></label>
+            <div class="layui-input-3">
+                <input type="text" name="bah" value="<?php echo $system['bah']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('recordNum'); ?>" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Copyright</label>
+            <div class="layui-input-3">
+                <input type="text" name="copyright" value="<?php echo $system['copyright']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?>Copyright" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">排序</label>
-            <div class="layui-input-2">
-                <input type="text" name="sort" value="<?php echo $rule['sort']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?>排序编号" class="layui-input">
+            <label class="layui-form-label"><?php echo lang('companyAddress'); ?></label>
+            <div class="layui-input-3">
+                <input type="text" name="ads" value="<?php echo $system['ads']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('companyAddress'); ?>" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><?php echo lang('tel'); ?></label>
+            <div class="layui-input-3">
+                <input type="text" name="tel" value="<?php echo $system['tel']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('tel'); ?>" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><?php echo lang('email'); ?></label>
+            <div class="layui-input-3">
+                <input type="text" name="email" value="<?php echo $system['email']; ?>" placeholder="<?php echo lang('pleaseEnter'); ?><?php echo lang('email'); ?>" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button type="button" class="layui-btn" lay-submit="" lay-filter="auth">立即提交</button>
-                <a href="<?php echo url('adminRule'); ?>" class="layui-btn layui-btn-primary">返回</a>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="sys"><?php echo lang('submit'); ?></button>
+                <button type="reset" class="layui-btn layui-btn-primary"><?php echo lang('reset'); ?></button>
             </div>
         </div>
     </form>
@@ -193,17 +226,50 @@
 </body>
 </html>
 <script>
-    layui.use(['form', 'layer'], function () {
-        var form = layui.form,layer = layui.layer,$ = layui.jquery;
-        form.on('submit(auth)', function (data) {
-            // 提交到方法 默认为本身
-            $.post("<?php echo url('ruleEdit'); ?>",data.field,function(res){
+    layui.use(['form', 'layer','upload'], function () {
+        var form = layui.form,layer = layui.layer,upload = layui.upload,$ = layui.jquery;
+        if("<?php echo $system['logo']; ?>"){
+            cltLogo.src = "/public"+ "<?php echo $system['logo']; ?>";
+        }
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#logoBtn'
+            ,url: '<?php echo url("UpFiles/upload"); ?>'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#cltLogo').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //上传成功
+                if(res.code>0){
+                    $('#logo').val(res.url);
+                }else{
+                    //如果上传失败
+                    return layer.msg('上传失败');
+                }
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+        //提交监听
+        form.on('submit(sys)', function (data) {
+            loading =layer.load(1, {shade: [0.1,'#fff']});
+            $.post("<?php echo url('system/system'); ?>",data.field,function(res){
+                layer.close(loading);
                 if(res.code > 0){
-                    layer.msg(res.msg,{time:1800,icon:1},function(){
+                    layer.msg(res.msg,{icon: 1, time: 1000},function(){
                         location.href = res.url;
                     });
                 }else{
-                    layer.msg(res.msg,{time:1800,icon:2});
+                    layer.msg(res.msg,{icon: 2, time: 1000});
                 }
             });
         })

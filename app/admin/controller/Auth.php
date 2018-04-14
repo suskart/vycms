@@ -63,7 +63,7 @@ class Auth extends Common
             $this->assign('title',lang('add').lang('admin'));
             $this->assign('info','null');
             $this->assign('selected', 'null');
-            return view('adminForm');
+            return view('admin_form');
         }
     }
     //删除管理员
@@ -129,7 +129,7 @@ class Auth extends Common
             $this->assign('info', $info->toJson());
             $this->assign('authGroup',json_encode($auth_group,true));
             $this->assign('title',lang('edit').lang('admin'));
-            return view('adminForm');
+            return view('admin_form');
         }
     }
     /*-----------------------用户组管理----------------------*/
@@ -159,7 +159,7 @@ class Auth extends Common
         }else{
             $this->assign('title','添加用户组');
             $this->assign('info','null');
-            return $this->fetch('groupForm');
+            return $this->fetch('group_form');
         }
     }
     //修改分组
@@ -174,7 +174,7 @@ class Auth extends Common
             $info = AuthGroup::get(['group_id'=>$id]);
             $this->assign('info', json_encode($info,true));
             $this->assign('title','编辑用户组');
-            return $this->fetch('groupForm');
+            return $this->fetch('group_form');
         }
     }
     //分组配置规则
@@ -183,12 +183,13 @@ class Auth extends Common
         $admin_rule=db('auth_rule')->field('id,pid,title')->order('sort asc')->select();
         $rules = db('auth_group')->where('group_id',input('id'))->value('rules');
         $arr = $nav->auth($admin_rule,$pid=0,$rules);
-        $arr[] = array(
+/*        $arr[] = array(
             "id"=>0,
             "pid"=>0,
             "title"=>"全部",
             "open"=>true
-        );
+        );*/
+//		p($arr);
         $this->assign('data',json_encode($arr,true));
         return $this->fetch();
     }
@@ -290,16 +291,15 @@ class Auth extends Common
         if(request()->isPost()) {
             $datas = input('post.');
             if(authRule::update($datas)) {
-                cache('authRule', NULL);
-                cache('authRuleList', NULL);
+//              cache('authRule', NULL);
+//              cache('authRuleList', NULL);
                 return json(['code' => 1, 'msg' => '保存成功!', 'url' => url('adminRule')]);
             } else {
                 return json(['code' => 0, 'msg' =>'保存失败！']);
             }
         }else{
-            $admin_rule = authRule::get(function($query){
-                $query->where(['id'=>input('id')])->field('id,href,title,icon,sort,menustatus');
-            });
+            
+			$admin_rule = db('authRule')->find(input('id'));
             $this->assign('rule',$admin_rule);
             return $this->fetch();
         }

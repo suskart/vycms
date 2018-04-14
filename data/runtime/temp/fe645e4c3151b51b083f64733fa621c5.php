@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:52:"D:\wwwroot\vycms/app/admin\view\auth\admin_rule.html";i:1523543350;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:44:"D:\wwwroot\vycms/app/admin\view\ad\type.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -92,29 +92,19 @@
     	
 <div class="admin-main layui-anim layui-anim-upbit">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>菜单列表</legend>
+        <legend><?php echo lang('ad'); ?>位管理</legend>
     </fieldset>
-    <blockquote class="layui-elem-quote">
-        <a href="<?php echo url('ruleAdd'); ?>" class="layui-btn layui-btn-sm"><?php echo lang('add'); ?>权限</a>
-    </blockquote>
+    <div class="demoTable">
+        <div class="layui-inline">
+            <input class="layui-input" name="key" id="key" placeholder="<?php echo lang('pleaseEnter'); ?>关键字">
+        </div>
+        <button class="layui-btn" id="search" data-type="reload"><?php echo lang('search'); ?></button>
+        <a href="<?php echo url('type'); ?>" class="layui-btn">显示全部</a>
+        <a href="<?php echo url('addType'); ?>" class="layui-btn" style="float:right;"><i class="fa fa-plus" aria-hidden="true"></i><?php echo lang('add'); ?><?php echo lang('ad'); ?>位</a>
+        <div style="clear: both;"></div>
+    </div>
     <table class="layui-table" id="list" lay-filter="list"></table>
 </div>
-<script type="text/html" id="auth">
-    <input type="checkbox" name="authopen" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="authopen" {{ d.authopen == 0 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="status">
-    <input type="checkbox" name="menustatus" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="menustatus" {{ d.menustatus == 1 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="order">
-    <input name="{{d.id}}" data-id="{{d.id}}" class="list_order layui-input" value=" {{d.sort}}" size="10"/>
-</script>
-<script type="text/html" id="icon">
-    <span class="icon {{d.icon}}"></span>
-</script>
-<script type="text/html" id="action">
-    <a href="<?php echo url('ruleEdit'); ?>?id={{d.id}}" class="layui-btn layui-btn-xs"><?php echo lang('edit'); ?></a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><?php echo lang('del'); ?></a>
-</script>
 </div>
   </div>
   
@@ -161,82 +151,71 @@
     </script>
 </body>
 </html>
+<script type="text/html" id="order">
+    <input name="{{d.type_id}}" data-id="{{d.type_id}}" class="list_order layui-input" value=" {{d.sort}}" size="10"/>
+</script>
+<script type="text/html" id="action">
+    <a href="<?php echo url('editType'); ?>?type_id={{d.type_id}}" class="layui-btn layui-btn-xs">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
 <script>
-    layui.use(['table','form'], function() {
-        var table = layui.table,form = layui.form, $ = layui.jquery;
-        tableIn = table.render({
+    layui.use('table', function() {
+        var table = layui.table, $ = layui.jquery;
+        var tableIn = table.render({
+            id: 'type',
             elem: '#list',
-            url: '<?php echo url("adminRule"); ?>',
+            url: '<?php echo url("type"); ?>',
             method: 'post',
             cols: [[
-                {field: 'id', title: '<?php echo lang("id"); ?>', width: 70, fixed: true},
-                {field: 'icon', align: 'center',title: '<?php echo lang("icon"); ?>', width: 60,templet: '#icon'},
-                {field: 'ltitle', title: '权限名称', width: 200},
-                {field: 'href', title: '控制器/方法', width: 200},
-                {field: 'authopen',align: 'center', title: '是否验证权限', width: 150,toolbar: '#auth'},
-                {field: 'menustatus',align: 'center',title: '菜单<?php echo lang("status"); ?>', width: 150,toolbar: '#status'},
-                {field: 'sort',align: 'center', title: '<?php echo lang("order"); ?>', width: 80, templet: '#order'},
-                {width: 160,align: 'center', toolbar: '#action'}
+                {field: 'type_id', title: '<?php echo lang("id"); ?>', width: 80, fixed: true, sort: true},
+                {field: 'name', title: '广告位名称', width: 400, templet: '#name'},
+                {field: 'sort', align: 'center', title: '<?php echo lang("order"); ?>', width: 120, templet: '#order', sort: true},
+                {width: 160, align: 'center', toolbar: '#action'}
             ]]
         });
-        form.on('switch(authopen)', function(obj){
-            loading =layer.load(1, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var authopen = obj.elem.checked===true?0:1;
-            $.post('<?php echo url("ruleTz"); ?>',{'id':id,'authopen':authopen},function (res) {
+        //搜索
+        $('#search').on('click', function () {
+            var key = $('#key').val();
+            if ($.trim(key) === '') {
+                layer.msg('<?php echo lang("pleaseEnter"); ?>关键字！', {icon: 0});
+                return;
+            }
+            tableIn.reload({
+                where: {key: key}
+            });
+        });
+        //排序
+        $('body').on('blur','.list_order',function() {
+            var type_id = $(this).attr('data-id');
+            var sort = $(this).val();
+            var loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post('<?php echo url("typeOrder"); ?>',{type_id:type_id,sort:sort},function(res){
                 layer.close(loading);
-                if (res.status==1) {
+                if(res.code === 1){
+                    layer.msg(res.msg, {time: 1000, icon: 1});
                     tableIn.reload();
                 }else{
                     layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
                 }
             })
         });
-        form.on('switch(menustatus)', function(obj){
-            loading =layer.load(1, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var menustatus = obj.elem.checked===true?1:0;
-            $.post('<?php echo url("ruleState"); ?>',{'id':id,'menustatus':menustatus},function (res) {
-                layer.close(loading);
-                if (res.status==1) {
-                    tableIn.reload();
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
-                }
-            })
-        });
-        table.on('tool(list)', function(obj){
+        table.on('tool(list)', function(obj) {
             var data = obj.data;
             if(obj.event === 'del'){
-                layer.confirm('您确定要删除该记录吗？', function(index){
+                layer.confirm('您确定要删除该广告分类吗？', function(index){
                     var loading = layer.load(1, {shade: [0.1, '#fff']});
-                    $.post("<?php echo url('ruleDel'); ?>",{id:data.id},function(res){
+                    $.post("<?php echo url('delType'); ?>",{type_id:data.type_id},function(res){
                         layer.close(loading);
-                        if(res.code==1){
+                        if(res.code===1){
                             layer.msg(res.msg,{time:1000,icon:1});
-                            obj.del();
+                            tableIn.reload();
                         }else{
-                            layer.msg(res.msg,{time:1000,icon:2});
+                            layer.msg('操作失败！',{time:1000,icon:2});
                         }
                     });
                     layer.close(index);
                 });
             }
         });
-        $('body').on('blur','.list_order',function() {
-           var id = $(this).attr('data-id');
-           var sort = $(this).val();
-           $.post('<?php echo url("ruleOrder"); ?>',{id:id,sort:sort},function(res){
-                if(res.code==1){
-                    layer.msg(res.msg,{time:1000,icon:1},function(){
-                        location.href = res.url;
-                    });
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                }
-           })
-        })
-    })
+    });
 </script>

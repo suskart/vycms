@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:52:"D:\wwwroot\vycms/app/admin\view\auth\admin_rule.html";i:1523543350;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:54:"D:\wwwroot\vycms/app/admin\view\database\database.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -92,29 +92,14 @@
     	
 <div class="admin-main layui-anim layui-anim-upbit">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>菜单列表</legend>
+        <legend>数据<?php echo lang('list'); ?></legend>
     </fieldset>
     <blockquote class="layui-elem-quote">
-        <a href="<?php echo url('ruleAdd'); ?>" class="layui-btn layui-btn-sm"><?php echo lang('add'); ?>权限</a>
+       数据库中共有<i class="count"></i>张表，共计<i class="size"></i>
+        <a href="javascript:void(0)" id="backUp" class="layui-btn layui-btn-sm pull-right">备份</a>
     </blockquote>
     <table class="layui-table" id="list" lay-filter="list"></table>
 </div>
-<script type="text/html" id="auth">
-    <input type="checkbox" name="authopen" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="authopen" {{ d.authopen == 0 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="status">
-    <input type="checkbox" name="menustatus" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="menustatus" {{ d.menustatus == 1 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="order">
-    <input name="{{d.id}}" data-id="{{d.id}}" class="list_order layui-input" value=" {{d.sort}}" size="10"/>
-</script>
-<script type="text/html" id="icon">
-    <span class="icon {{d.icon}}"></span>
-</script>
-<script type="text/html" id="action">
-    <a href="<?php echo url('ruleEdit'); ?>?id={{d.id}}" class="layui-btn layui-btn-xs"><?php echo lang('edit'); ?></a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><?php echo lang('del'); ?></a>
-</script>
 </div>
   </div>
   
@@ -161,82 +146,86 @@
     </script>
 </body>
 </html>
+<script type="text/html" id="size">
+    {{d.size}}
+</script>
+<script type="text/html" id="action">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="optimize">优化</a>
+    <a class="layui-btn layui-btn-xs" lay-event="repair">修复</a>
+</script>
 <script>
-    layui.use(['table','form'], function() {
-        var table = layui.table,form = layui.form, $ = layui.jquery;
-        tableIn = table.render({
+    layui.use('table', function() {
+        var table = layui.table, $ = layui.jquery;
+        table.render({
+            id: 'database',
             elem: '#list',
-            url: '<?php echo url("adminRule"); ?>',
+            url: '<?php echo url("database"); ?>',
             method: 'post',
             cols: [[
-                {field: 'id', title: '<?php echo lang("id"); ?>', width: 70, fixed: true},
-                {field: 'icon', align: 'center',title: '<?php echo lang("icon"); ?>', width: 60,templet: '#icon'},
-                {field: 'ltitle', title: '权限名称', width: 200},
-                {field: 'href', title: '控制器/方法', width: 200},
-                {field: 'authopen',align: 'center', title: '是否验证权限', width: 150,toolbar: '#auth'},
-                {field: 'menustatus',align: 'center',title: '菜单<?php echo lang("status"); ?>', width: 150,toolbar: '#status'},
-                {field: 'sort',align: 'center', title: '<?php echo lang("order"); ?>', width: 80, templet: '#order'},
-                {width: 160,align: 'center', toolbar: '#action'}
-            ]]
+                {checkbox:true,fixed: true},
+                {field: 'Name', title: '数据库表', width: 150, fixed: true,sort: true},
+                {field: 'Rows', title: '记录条数', width: 150,sort: true},
+                {field: 'Data_length', title: '占用空间', width: 150,templet:'#size',sort: true},
+                {field: 'Engine', title: '类型', width: 110,sort: true},
+                {field: 'Collation', title: '编码', width: 150,sort: true},
+                {field: 'Create_time', title: '创建时间', width: 180,sort: true},
+                {field: 'Comment', title: '说明', width: 180},
+                {width: 160, align: 'center', toolbar: '#action'}
+            ]],
+            done: function(res, curr, count){
+                $('.count').html(res.tableNum);
+                $('.size').html(res.total);
+            }
         });
-        form.on('switch(authopen)', function(obj){
-            loading =layer.load(1, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var authopen = obj.elem.checked===true?0:1;
-            $.post('<?php echo url("ruleTz"); ?>',{'id':id,'authopen':authopen},function (res) {
-                layer.close(loading);
-                if (res.status==1) {
-                    tableIn.reload();
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
-                }
-            })
-        });
-        form.on('switch(menustatus)', function(obj){
-            loading =layer.load(1, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var menustatus = obj.elem.checked===true?1:0;
-            $.post('<?php echo url("ruleState"); ?>',{'id':id,'menustatus':menustatus},function (res) {
-                layer.close(loading);
-                if (res.status==1) {
-                    tableIn.reload();
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
-                }
-            })
-        });
-        table.on('tool(list)', function(obj){
+        table.on('tool(list)', function(obj) {
             var data = obj.data;
-            if(obj.event === 'del'){
-                layer.confirm('您确定要删除该记录吗？', function(index){
-                    var loading = layer.load(1, {shade: [0.1, '#fff']});
-                    $.post("<?php echo url('ruleDel'); ?>",{id:data.id},function(res){
-                        layer.close(loading);
-                        if(res.code==1){
-                            layer.msg(res.msg,{time:1000,icon:1});
-                            obj.del();
-                        }else{
-                            layer.msg(res.msg,{time:1000,icon:2});
-                        }
-                    });
-                    layer.close(index);
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            if (obj.event === 'optimize') {
+                $.post("<?php echo url('database/optimize'); ?>",{tableName:data.Name},function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg,{time:1000,icon:1},function(){
+                            window.location.href = res.url;
+                        });
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
+                });
+            }else if(obj.event === 'repair'){
+                $.post("<?php echo url('database/repair'); ?>",{tableName:data.Name},function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg,{time:1000,icon:1},function(){
+                            window.location.href = res.url;
+                        });
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
                 });
             }
         });
-        $('body').on('blur','.list_order',function() {
-           var id = $(this).attr('data-id');
-           var sort = $(this).val();
-           $.post('<?php echo url("ruleOrder"); ?>',{id:id,sort:sort},function(res){
-                if(res.code==1){
-                    layer.msg(res.msg,{time:1000,icon:1},function(){
-                        location.href = res.url;
-                    });
+
+        $('#backUp').click(function(){
+            var obj = $(this);
+            var checkStatus = table.checkStatus('database'); //test即为参数id设定的值
+            var a = [];
+            $(checkStatus.data).each(function(i,o){
+                a.push(o.Name);
+            });
+            obj.addClass('layui-btn-disabled');
+            obj.html('备份进行中...');
+            $.post("<?php echo url('database/backup'); ?>",{tables:a},function(data){
+                data = eval('('+data+')');
+                if(data.code==1){
+                    obj.removeClass('layui-btn-disabled');
+                    obj.html('备份');
+                    layer.msg(data.msg,{time:1000,icon:1});
                 }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
+                    layer.msg(data.msg,{time:1000,icon:2});
                 }
-           })
+            });
         })
-    })
+
+
+    });
 </script>

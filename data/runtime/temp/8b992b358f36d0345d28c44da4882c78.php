@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:52:"D:\wwwroot\vycms/app/admin\view\auth\admin_rule.html";i:1523543350;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:54:"D:\wwwroot\vycms/app/admin\view\auth\group_access.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -90,31 +90,21 @@
     <!-- 内容主体区域 -->
     <div style="padding: 15px;">
     	
+<link rel="stylesheet" href="/public/static/plugins/zTree/css/zTreeStyle.css" type="text/css">
 <div class="admin-main layui-anim layui-anim-upbit">
-    <fieldset class="layui-elem-field layui-field-title">
-        <legend>菜单列表</legend>
+    <fieldset class="layui-elem-field">
+        <legend>配置权限</legend>
+        <div class="layui-field-box">
+            <form class="layui-form layui-form-pane">
+                <ul id="treeDemo" class="ztree"></ul>
+                <div class="layui-form-item text-center">
+                    <button type="button" class="layui-btn" lay-submit="" lay-filter="submit"><?php echo lang('submit'); ?></button>
+                    <button class="layui-btn layui-btn-danger" type="button" onclick="window.history.back()"><?php echo lang('back'); ?></button>
+                </div>
+            </form>
+        </div>
     </fieldset>
-    <blockquote class="layui-elem-quote">
-        <a href="<?php echo url('ruleAdd'); ?>" class="layui-btn layui-btn-sm"><?php echo lang('add'); ?>权限</a>
-    </blockquote>
-    <table class="layui-table" id="list" lay-filter="list"></table>
 </div>
-<script type="text/html" id="auth">
-    <input type="checkbox" name="authopen" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="authopen" {{ d.authopen == 0 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="status">
-    <input type="checkbox" name="menustatus" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="menustatus" {{ d.menustatus == 1 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="order">
-    <input name="{{d.id}}" data-id="{{d.id}}" class="list_order layui-input" value=" {{d.sort}}" size="10"/>
-</script>
-<script type="text/html" id="icon">
-    <span class="icon {{d.icon}}"></span>
-</script>
-<script type="text/html" id="action">
-    <a href="<?php echo url('ruleEdit'); ?>?id={{d.id}}" class="layui-btn layui-btn-xs"><?php echo lang('edit'); ?></a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><?php echo lang('del'); ?></a>
-</script>
 </div>
   </div>
   
@@ -161,82 +151,48 @@
     </script>
 </body>
 </html>
-<script>
-    layui.use(['table','form'], function() {
-        var table = layui.table,form = layui.form, $ = layui.jquery;
-        tableIn = table.render({
-            elem: '#list',
-            url: '<?php echo url("adminRule"); ?>',
-            method: 'post',
-            cols: [[
-                {field: 'id', title: '<?php echo lang("id"); ?>', width: 70, fixed: true},
-                {field: 'icon', align: 'center',title: '<?php echo lang("icon"); ?>', width: 60,templet: '#icon'},
-                {field: 'ltitle', title: '权限名称', width: 200},
-                {field: 'href', title: '控制器/方法', width: 200},
-                {field: 'authopen',align: 'center', title: '是否验证权限', width: 150,toolbar: '#auth'},
-                {field: 'menustatus',align: 'center',title: '菜单<?php echo lang("status"); ?>', width: 150,toolbar: '#status'},
-                {field: 'sort',align: 'center', title: '<?php echo lang("order"); ?>', width: 80, templet: '#order'},
-                {width: 160,align: 'center', toolbar: '#action'}
-            ]]
-        });
-        form.on('switch(authopen)', function(obj){
+<script type="text/javascript" src="/public/static/common/js/jquery.2.1.1.min.js"></script>
+<script type="text/javascript" src="/public/static/plugins/zTree/js/jquery.ztree.core.min.js"></script>
+<script type="text/javascript" src="/public/static/plugins/zTree/js/jquery.ztree.excheck.min.js"></script>
+<script type="text/javascript">
+    var setting = {
+        check:{enable: true},
+        view: {showLine: false, showIcon: false, dblClickExpand: false},
+        data: {
+            simpleData: {enable: true, pIdKey:'pid', idKey:'id'},
+            key:{name:'title'}
+        }
+    };
+    var zNodes =<?php echo $data; ?>;
+    function setCheck() {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        zTree.setting.check.chkboxType = { "Y":"ps", "N":"ps"};
+
+    }
+    $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+    setCheck();
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, layer = layui.layer;
+        form.on('submit(submit)', function () {
             loading =layer.load(1, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var authopen = obj.elem.checked===true?0:1;
-            $.post('<?php echo url("ruleTz"); ?>',{'id':id,'authopen':authopen},function (res) {
-                layer.close(loading);
-                if (res.status==1) {
-                    tableIn.reload();
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
-                }
-            })
-        });
-        form.on('switch(menustatus)', function(obj){
-            loading =layer.load(1, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var menustatus = obj.elem.checked===true?1:0;
-            $.post('<?php echo url("ruleState"); ?>',{'id':id,'menustatus':menustatus},function (res) {
-                layer.close(loading);
-                if (res.status==1) {
-                    tableIn.reload();
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
-                }
-            })
-        });
-        table.on('tool(list)', function(obj){
-            var data = obj.data;
-            if(obj.event === 'del'){
-                layer.confirm('您确定要删除该记录吗？', function(index){
-                    var loading = layer.load(1, {shade: [0.1, '#fff']});
-                    $.post("<?php echo url('ruleDel'); ?>",{id:data.id},function(res){
-                        layer.close(loading);
-                        if(res.code==1){
-                            layer.msg(res.msg,{time:1000,icon:1});
-                            obj.del();
-                        }else{
-                            layer.msg(res.msg,{time:1000,icon:2});
-                        }
-                    });
-                    layer.close(index);
-                });
+            // 提交到方法 默认为本身
+            var treeObj=$.fn.zTree.getZTreeObj("treeDemo"),
+                nodes=treeObj.getCheckedNodes(true),
+                v="";
+            for(var i=0;i<nodes.length;i++){
+                v+=nodes[i].id + ",";
             }
-        });
-        $('body').on('blur','.list_order',function() {
-           var id = $(this).attr('data-id');
-           var sort = $(this).val();
-           $.post('<?php echo url("ruleOrder"); ?>',{id:id,sort:sort},function(res){
-                if(res.code==1){
-                    layer.msg(res.msg,{time:1000,icon:1},function(){
+            var id = "<?php echo input('id'); ?>";
+            $.post("<?php echo url('groupSetaccess'); ?>", {'rules':v,'group_id':id}, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
                         location.href = res.url;
                     });
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
                 }
-           })
+            });
         })
-    })
+    });
 </script>

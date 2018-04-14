@@ -15,22 +15,16 @@
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
+	
   <div class="layui-header">
-    <div class="layui-logo">{:config('sysname')}</div>
+    <div class="layui-logo" style="color: #fff;font-size: 22px;">{:config('sysname')}</div>
     <!-- 头部区域（可配合layui已有的水平导航） -->
-    <ul class="layui-nav layui-layout-left">
+    <ul class="layui-nav layui-layout-left" lay-filter="menuTab">
     	
     	{volist name="topMenus" id="vo"}
-    	<li class="layui-nav-item toplist" data-pid="{$vo.id}"><a href="javascript:;">{$vo.title}</a></li>
+    	<li class="layui-nav-item toplist {if condition='$vo["id"] eq $topMid'}layui-this{/if}" data-pid="{$vo.id}"><a href="javascript:;">{$vo.title}</a></li>
     	{/volist}
-      <!--<li class="layui-nav-item layui-this">
-        <a href="javascript:;">其它系统</a>
-        <dl class="layui-nav-child">
-          <dd><a href="">邮件管理</a></dd>
-          <dd><a href="">消息管理</a></dd>
-          <dd><a href="">授权管理</a></dd>
-        </dl>
-      </li>-->
+
       
     </ul>
     <ul class="layui-nav layui-layout-right">
@@ -52,55 +46,39 @@
   
   <div class="layui-side layui-bg-black">
     <div class="layui-side-scroll">
-      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-      
-      <ul class="layui-nav layui-nav-tree" id="navlist" lay-filter="test">
-        <li class="layui-nav-item layui-this">
-            <a href="javascript:;"><i class="fa fa-home"></i>首页</a>
-           
-        </li>
-        
-        
+
 <script id="navdata" type="text/html">
-{{each data as v}}
-  <li class="layui-nav-item layui-nav-itemed">
-          <a class="" href="javascript:;">{{ v.title }}</a>
+  <ul>
+  {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">{{ item.title }}</a>
           <dl class="layui-nav-child">
-          	
-{{each v.child as vv}}
-            <dd><a href="{{ vv.href }}">{{ vv.title }}</a></dd>
-           
-{{/each}}
-    
-          </dl>
-        </li>
-{{/each}}
-
-</script>
-
-        
-        {volist name="menus" id="v"}
-        <!--<li class="layui-nav-item">
-          <a class="" href="javascript:;">{$v.title}</a>
-          <dl class="layui-nav-child">
-          	{volist name="$v['children']" id="vv"}
-            <dd><a href="{$vv['href']}">{$vv['title']}</a></dd>
-            {/volist}
+          	{{#  layui.each(item.child, function(index2, item2){ }}
+            <dd {{# if(item2.act==1){ }} class="layui-this"{{# } }}><a href="{{ item2.href }}">{{ item2.title }}</a></dd>
+            {{#  }) }} 
             
           </dl>
-        </li>-->
-        {/volist}
+        </li>
+
+  {{#  }) }} 
+  </ul>
+</script>
+		<div class="">
+        	
+        </div>
+      <ul class="layui-nav layui-nav-tree" id="navlist" >
         
-        <!--<li class="layui-nav-item layui-this">
-          <a href="javascript:;">解决方案</a>
-          <dl class="layui-nav-child">
-            <dd><a href="javascript:;">列表一</a></dd>
-            <dd><a href="javascript:;">列表二</a></dd>
-            <dd><a href="">超链接</a></dd>
+        {volist name="menus" id="v"}
+       	<li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:;"><i class="fa fa-home"></i>{$v.title}</a>
+           <dl class="layui-nav-child">
+          	{volist name="v.child" id="vv"}
+            <dd {if condition="$vv['act'] eq 1"}class="layui-this"{/if}><a href="{$vv.href}">{$vv.title}</a></dd>
+            {/volist}   
+            
           </dl>
         </li>
-        <li class="layui-nav-item"><a href="">云市场</a></li>
-        <li class="layui-nav-item"><a href="">发布商品</a></li>-->
+    	{/volist}   
       </ul>
       
       

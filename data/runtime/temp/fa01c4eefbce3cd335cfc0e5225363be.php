@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:52:"D:\wwwroot\vycms/app/admin\view\auth\admin_rule.html";i:1523543350;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:53:"D:\wwwroot\vycms/app/admin\view\database\restore.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -92,29 +92,10 @@
     	
 <div class="admin-main layui-anim layui-anim-upbit">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>菜单列表</legend>
+        <legend>备份文件列表</legend>
     </fieldset>
-    <blockquote class="layui-elem-quote">
-        <a href="<?php echo url('ruleAdd'); ?>" class="layui-btn layui-btn-sm"><?php echo lang('add'); ?>权限</a>
-    </blockquote>
     <table class="layui-table" id="list" lay-filter="list"></table>
 </div>
-<script type="text/html" id="auth">
-    <input type="checkbox" name="authopen" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="authopen" {{ d.authopen == 0 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="status">
-    <input type="checkbox" name="menustatus" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="menustatus" {{ d.menustatus == 1 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="order">
-    <input name="{{d.id}}" data-id="{{d.id}}" class="list_order layui-input" value=" {{d.sort}}" size="10"/>
-</script>
-<script type="text/html" id="icon">
-    <span class="icon {{d.icon}}"></span>
-</script>
-<script type="text/html" id="action">
-    <a href="<?php echo url('ruleEdit'); ?>?id={{d.id}}" class="layui-btn layui-btn-xs"><?php echo lang('edit'); ?></a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><?php echo lang('del'); ?></a>
-</script>
 </div>
   </div>
   
@@ -161,82 +142,59 @@
     </script>
 </body>
 </html>
+<script type="text/html" id="size">
+    {{d.sortSize}}
+</script>
+<script type="text/html" id="action">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="recover">恢复</a>
+    <a href="<?php echo url('downFile'); ?>?type=sql&file={{d.name}}" class="layui-btn layui-btn-xs">下载</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><?php echo lang('del'); ?></a>
+</script>
 <script>
-    layui.use(['table','form'], function() {
-        var table = layui.table,form = layui.form, $ = layui.jquery;
-        tableIn = table.render({
-            elem: '#list',
-            url: '<?php echo url("adminRule"); ?>',
-            method: 'post',
-            cols: [[
-                {field: 'id', title: '<?php echo lang("id"); ?>', width: 70, fixed: true},
-                {field: 'icon', align: 'center',title: '<?php echo lang("icon"); ?>', width: 60,templet: '#icon'},
-                {field: 'ltitle', title: '权限名称', width: 200},
-                {field: 'href', title: '控制器/方法', width: 200},
-                {field: 'authopen',align: 'center', title: '是否验证权限', width: 150,toolbar: '#auth'},
-                {field: 'menustatus',align: 'center',title: '菜单<?php echo lang("status"); ?>', width: 150,toolbar: '#status'},
-                {field: 'sort',align: 'center', title: '<?php echo lang("order"); ?>', width: 80, templet: '#order'},
-                {width: 160,align: 'center', toolbar: '#action'}
+    layui.use('table', function() {
+        var table = layui.table, $ = layui.jquery;
+        table.render({
+            elem: '#list'
+            ,url: '<?php echo url("restore"); ?>',
+            method:'post'
+            ,cols: [[
+                {field:'name', title: '文件名称', width:250}
+                ,{field:'size', title: '文件大小', width:200,sort:true,templet:'#size'}
+                ,{field:'time', title: '备份时间', width:200,sort:true}
+                ,{field:'number', title: '卷号', width:150}
+                ,{width:160, align:'center', toolbar: '#action'}
             ]]
         });
-        form.on('switch(authopen)', function(obj){
-            loading =layer.load(1, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var authopen = obj.elem.checked===true?0:1;
-            $.post('<?php echo url("ruleTz"); ?>',{'id':id,'authopen':authopen},function (res) {
-                layer.close(loading);
-                if (res.status==1) {
-                    tableIn.reload();
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
-                }
-            })
-        });
-        form.on('switch(menustatus)', function(obj){
-            loading =layer.load(1, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var menustatus = obj.elem.checked===true?1:0;
-            $.post('<?php echo url("ruleState"); ?>',{'id':id,'menustatus':menustatus},function (res) {
-                layer.close(loading);
-                if (res.status==1) {
-                    tableIn.reload();
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
-                }
-            })
-        });
-        table.on('tool(list)', function(obj){
+        table.on('tool(list)', function(obj) {
             var data = obj.data;
-            if(obj.event === 'del'){
-                layer.confirm('您确定要删除该记录吗？', function(index){
-                    var loading = layer.load(1, {shade: [0.1, '#fff']});
-                    $.post("<?php echo url('ruleDel'); ?>",{id:data.id},function(res){
+            if (obj.event === 'recover') {
+                loading = layer.load(1, {shade: [0.1, '#fff']});
+                layer.confirm('确认要导入数据吗？',{icon: 0}, function (index) {
+                    $.post("<?php echo url('restoreData'); ?>",{sqlfilepre:data.name},function(res){
                         layer.close(loading);
                         if(res.code==1){
-                            layer.msg(res.msg,{time:1000,icon:1});
+                            layer.msg(res.msg, {time: 1000,icon:1});
+                        }else{
+                            layer.msg(res.msg, {time: 1000,icon:2});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }else if(obj.event === 'del'){
+                layer.confirm('确认要删除该备份文件吗？', {icon: 3}, function (index) {
+                    loading = layer.load(1, {shade: [0.1, '#fff']});
+                    $.post('<?php echo url("delSqlFiles"); ?>',{sqlfilename: data.name}, function (res) {
+                        layer.close(loading);
+                        if (res.code == 1) {
+                            layer.msg(res.msg, {time: 1000,icon:1});
                             obj.del();
                         }else{
-                            layer.msg(res.msg,{time:1000,icon:2});
+                            layer.msg(res.info,{time: 1000,icon:2});
                         }
                     });
                     layer.close(index);
                 });
             }
         });
-        $('body').on('blur','.list_order',function() {
-           var id = $(this).attr('data-id');
-           var sort = $(this).val();
-           $.post('<?php echo url("ruleOrder"); ?>',{id:id,sort:sort},function(res){
-                if(res.code==1){
-                    layer.msg(res.msg,{time:1000,icon:1},function(){
-                        location.href = res.url;
-                    });
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                }
-           })
-        })
-    })
+    });
 </script>

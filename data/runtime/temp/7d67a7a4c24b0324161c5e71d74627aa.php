@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:50:"D:\wwwroot\vycms/app/admin\view\auth\rule_add.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523591795;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523543425;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:50:"D:\wwwroot\vycms/app/admin\view\auth\rule_add.html";i:1521594995;s:48:"D:\wwwroot\vycms\app\admin\view\common\head.html";i:1523619588;s:48:"D:\wwwroot\vycms\app\admin\view\common\foot.html";i:1523623560;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,21 +16,17 @@
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
+	
   <div class="layui-header">
-    <div class="layui-logo"><?php echo config('sysname'); ?></div>
+    <div class="layui-logo" style="color: #fff;font-size: 22px;"><?php echo config('sysname'); ?></div>
     <!-- 头部区域（可配合layui已有的水平导航） -->
-    <ul class="layui-nav layui-layout-left">
-      <li class="layui-nav-item layui-this"><a href="">控制台</a></li>
-      <li class="layui-nav-item"><a href="">商品管理</a></li>
-      <li class="layui-nav-item"><a href="">用户</a></li>
-      <li class="layui-nav-item">
-        <a href="javascript:;">其它系统</a>
-        <dl class="layui-nav-child">
-          <dd><a href="">邮件管理</a></dd>
-          <dd><a href="">消息管理</a></dd>
-          <dd><a href="">授权管理</a></dd>
-        </dl>
-      </li>
+    <ul class="layui-nav layui-layout-left" lay-filter="menuTab">
+    	
+    	<?php if(is_array($topMenus) || $topMenus instanceof \think\Collection || $topMenus instanceof \think\Paginator): $i = 0; $__LIST__ = $topMenus;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?>
+    	<li class="layui-nav-item toplist <?php if($vo["id"] == $topMid): ?>layui-this<?php endif; ?>" data-pid="<?php echo $vo['id']; ?>"><a href="javascript:;"><?php echo $vo['title']; ?></a></li>
+    	<?php endforeach; endif; else: echo "" ;endif; ?>
+
+      
     </ul>
     <ul class="layui-nav layui-layout-right">
 		 <li class="layui-nav-item"><a href="/" target="_blank">网站首页</a></li>
@@ -51,32 +47,39 @@
   
   <div class="layui-side layui-bg-black">
     <div class="layui-side-scroll">
-      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-      
-      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-        
-        <?php if(is_array($menus) || $menus instanceof \think\Collection || $menus instanceof \think\Paginator): $i = 0; $__LIST__ = $menus;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$v): $mod = ($i % 2 );++$i;?>
-        <li class="layui-nav-item">
-          <a class="" href="javascript:;"><?php echo $v['title']; ?></a>
+
+<script id="navdata" type="text/html">
+  <ul>
+  {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">{{ item.title }}</a>
           <dl class="layui-nav-child">
-          	<?php if(is_array($v['children']) || $v['children'] instanceof \think\Collection || $v['children'] instanceof \think\Paginator): $i = 0; $__LIST__ = $v['children'];if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vv): $mod = ($i % 2 );++$i;?>
-            <dd><a href="<?php echo $vv['href']; ?>"><?php echo $vv['title']; ?></a></dd>
-            <?php endforeach; endif; else: echo "" ;endif; ?>
+          	{{#  layui.each(item.child, function(index2, item2){ }}
+            <dd {{# if(item2.act==1){ }} class="layui-this"{{# } }}><a href="{{ item2.href }}">{{ item2.title }}</a></dd>
+            {{#  }) }} 
             
           </dl>
         </li>
-        <?php endforeach; endif; else: echo "" ;endif; ?>
+
+  {{#  }) }} 
+  </ul>
+</script>
+		<div class="">
+        	
+        </div>
+      <ul class="layui-nav layui-nav-tree" id="navlist" >
         
-        <li class="layui-nav-item layui-this">
-          <a href="javascript:;">解决方案</a>
-          <dl class="layui-nav-child">
-            <dd><a href="javascript:;">列表一</a></dd>
-            <dd><a href="javascript:;">列表二</a></dd>
-            <dd><a href="">超链接</a></dd>
+        <?php if(is_array($menus) || $menus instanceof \think\Collection || $menus instanceof \think\Paginator): $i = 0; $__LIST__ = $menus;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$v): $mod = ($i % 2 );++$i;?>
+       	<li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:;"><i class="fa fa-home"></i><?php echo $v['title']; ?></a>
+           <dl class="layui-nav-child">
+          	<?php if(is_array($v['child']) || $v['child'] instanceof \think\Collection || $v['child'] instanceof \think\Paginator): $i = 0; $__LIST__ = $v['child'];if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vv): $mod = ($i % 2 );++$i;?>
+            <dd <?php if($vv['act'] == 1): ?>class="layui-this"<?php endif; ?>><a href="<?php echo $vv['href']; ?>"><?php echo $vv['title']; ?></a></dd>
+            <?php endforeach; endif; else: echo "" ;endif; ?>   
+            
           </dl>
         </li>
-        <li class="layui-nav-item"><a href="">云市场</a></li>
-        <li class="layui-nav-item"><a href="">发布商品</a></li>
+    	<?php endforeach; endif; else: echo "" ;endif; ?>   
       </ul>
       
       
@@ -151,14 +154,14 @@
   
   <div class="layui-footer" style="text-align: center;">
     <!-- 底部固定区域 -->
-    © www.vycom.com - 版权所有 2017-2018
+    © www.vycms.com - 版权所有 2017-2018
   </div>
 </div>
 <script src="/public/static/plugins/layui/layui.js"></script>
 
 <script>
-        layui.use(['layer','element'],function(){
-            var $ = layui.jquery, layer = layui.layer,element = layui.element;
+        layui.use(['layer','element','laytpl'],function(){
+            var $ = layui.jquery, layer = layui.layer,element = layui.element,laytpl = layui.laytpl;
             $('#cache').click(function () {
                 document.cookie="skin=;expires="+new Date().toGMTString();
                 layer.confirm('确认要清除缓存？', {icon: 3}, function () {
@@ -170,7 +173,25 @@
                     });
                 });
             });
-        })
+
+
+            $('.toplist').click(function () {
+            	var pid = $(this).attr('data-pid');
+              $.post('<?php echo url("common/getMenu"); ?>', {pid: pid},function(data) {
+
+							var getTpl = navdata.innerHTML
+							,view = document.getElementById('navlist');
+							laytpl(getTpl).render(data, function(html){
+							  view.innerHTML = html;
+							  element.init();//重新加载
+							});
+
+                });
+	            });
+            });
+   
+						
+       
     </script>
 </body>
 </html>
