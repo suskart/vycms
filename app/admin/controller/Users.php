@@ -123,7 +123,7 @@ class Users extends Common{
         }else{
             $this->assign('title',lang('add')."会员组");
             $this->assign('info','null');
-            return $this->fetch('groupForm');
+            return $this->fetch('group_form');
         }
     }
     public function groupEdit(){
@@ -139,7 +139,7 @@ class Users extends Common{
             $info = db('user_level')->where($map)->find();
             $this->assign('title',lang('edit')."会员组");
             $this->assign('info',json_encode($info,true));
-            return $this->fetch('groupForm');
+            return $this->fetch('group_form');
         }
     }
     public function groupDel(){
